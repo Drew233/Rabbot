@@ -44,18 +44,18 @@ jobs:
           asset_name: rabbot
           asset_content_type: application/octet-stream
 
-      - name: Create Source Code Archive
-        run: |
-          # Add commands to create a source code archive (e.g., zip or tar)
-          zip -r rabbot.zip ./
+      # - name: Create Source Code Archive
+      #   run: |
+      #     # Add commands to create a source code archive (e.g., zip or tar)
+      #     zip -r rabbot.zip ./
 
-      - name: Upload Source Code Archive
-        id: upload_source_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RAB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./rabbot.zip
-          asset_name: source-code.zip
-          asset_content_type: application/zip
+      # - name: Upload Source Code Archive
+      #   id: upload_source_asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.RAB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./rabbot.zip
+      #     asset_name: source-code.zip
+      #     asset_content_type: application/zip
