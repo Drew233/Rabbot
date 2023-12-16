@@ -2,7 +2,6 @@
 
 [![standard-readme compliant](https://img.shields.io/badge/openwechat-Rabbot-brightgreen.svg?style=flat-square)](https://github.com/Drew233/rabbot)
 
-README 文件是人们通常最先看到的第一个东西。它应该告诉人们为什么要使用、如何安装、以及如何使用你的代码。README 文件标准化能够使得创建和维护 README 文件更加简单。毕竟，要写好一个文档不是那么容易的。
 RabBot是基于[openwechat](https://github.com/eatMoreApple/openwechat)实现的微信机器人框架
 
 框架包含
@@ -22,12 +21,12 @@ RabBot是基于[openwechat](https://github.com/eatMoreApple/openwechat)实现的
 - [示例](#示例)
 - [相关仓库](#相关仓库)
 - [维护者](#维护者)
-- [如何贡献](#如何贡献)
 - [使用许可](#使用许可)
 
 ## 背景
 
 很早之前就想做个微信机器人玩玩，当时只看到了主流的`wechaty`，但是登陆限制太多，又完全联系不上开源激励计划，所以一直没有机会
+
 偶然间看到`openwechat`的打破登录限制，于是就上头了，Go是边做边学的，代码问题可能会有不少，欢迎提建议
 
 ## 安装
@@ -59,7 +58,7 @@ $ go mod tidy
 
 整体为一个json格式的字符串，下面会解释每个字段的含义
 
-```json
+```txt
 {
 	"botName": "小兔子",
     // botName 机器人微信昵称，因为现在暂时取不到登陆账号自己在群聊中的备注，所以直接采用微信昵称。主要用于判断是否是@自己的消息。注意：如果在群聊中改了自己的昵称，会导致功能失效
@@ -157,9 +156,11 @@ Usage of rabbot.exe:
 ```
 
 运行起来之后会给出一个链接扫码登陆即可，但是手机上的微信退出的话机器人会一起退出。
+
 解决方法：
-1、两个手机
-2、手机断网后退出登录，然后登陆其他账号再联网（退出登录时候需要多等一会）
+
+1. 两个手机
+2. 手机断网后退出登录，然后登陆其他账号再联网（退出登录时候需要多等一会）
 
 ### 调试
 在`./rabdata/tmp/`目录下新建一个文件`RabDbg`，源码中Debug级别的日志就会输出
@@ -189,12 +190,6 @@ Usage of rabbot.exe:
 非常欢迎你的加入！[提一个 Issue](https://github.com/RichardLitt/standard-readme/issues/new) 或者提交一个 Pull Request。
 
 标准 Readme 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
-
-### 贡献者
-
-感谢以下参与项目的人：
-<a href="graphs/contributors"><img src="https://opencollective.com/standard-readme/contributors.svg?width=890&button=false" /></a>
-
 
 ## 使用许可
 
