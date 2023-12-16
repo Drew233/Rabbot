@@ -1,7 +1,4 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
-name: Go
+name: Upload Release Asset
 
 on:
   push:
@@ -10,19 +7,55 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  build:
+  upload:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21.5'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.5'
 
-    - name: Build
-      run: go build -v ./cmd/main.go
+      - name: Build
+        run: go build -v ./cmd/main.go -o rabbot
 
-    # - name: Test
-    #   run: go test -v ./...
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RAB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Build Artifact
+        id: upload_build_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RAB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./rabbot
+          asset_name: rabbot
+          asset_content_type: application/octet-stream
+
+      - name: Create Source Code Archive
+        run: |
+          # Add commands to create a source code archive (e.g., zip or tar)
+          zip -r rabbot.zip ./
+
+      - name: Upload Source Code Archive
+        id: upload_source_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RAB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./rabbot.zip
+          asset_name: source-code.zip
+          asset_content_type: application/zip
