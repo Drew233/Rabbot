@@ -209,7 +209,7 @@ func init() {
 ```go
 func DrawLots(uname, uuid string) (*common.ReplyStruct, error)
 ```
-1. 修改配置文件，在features下添加对应插件的信息即可
+4. 修改配置文件，在features下添加对应插件的信息即可
 ```json
 
 		"抽签": {
