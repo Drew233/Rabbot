@@ -14,11 +14,20 @@ import (
 	@param msg openwechat框架中的msg结构
 	@return string 返回获取到的群聊名称
 */
-func GetGroupName(msg *openwechat.Message) string {
-	sender, _ := msg.Sender()
-	group,_ := sender.AsGroup()		// 将sender转为group类型
+func GetGroupName(msg *openwechat.Message) (string, string) {
+	sender, err := msg.Sender()
+	if err != nil {
+		return "", "GetSender"
+	}
+
+	group, terror := sender.AsGroup()		// 将sender转为group类型
+	
+	if terror != true || group == nil {
+		return "", "Getgroup"
+	}
+
 	group.Detail()					// 获取详细信息，保证信息及时更新
-	return group.NickName
+	return group.NickName, ""
 }
 
 /*
@@ -36,6 +45,23 @@ func GenTmpFilePath() string {
 
 	return fmt.Sprintf("%s/%s", TmpDir, currentTime)
 }
+
+/*
+	@Func 生成图片路径，格式为./data/pic/{timestamp}
+	@return string 图片的路径
+*/
+func GenPicFilePath() string {
+	if _, err := os.Stat(PicDir); os.IsNotExist(err) {
+		err := os.MkdirAll(PicDir, 0755)
+		if err != nil {
+			// log.Rabbot.Errorf("Create dir %s failed, %v", TmpDir, err)
+		} 
+	}
+	currentTime := time.Now().Unix()
+
+	return fmt.Sprintf("%s/%d", PicDir, currentTime)
+}
+
 
 /*
 	@Func 发送图片

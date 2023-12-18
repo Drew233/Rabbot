@@ -18,11 +18,13 @@ type RabConfigStruct struct {
 	Datadir string `json:"Datadir"`
 	DefaultMsg struct {
 		DullMsg string `json:"dullMsg"`
-		ErrMsg string `json:"ErrorMsg"`
+		ErrMsg string `json:"errorMsg"`
+		PaiMsg []string `json:"paiMsg"`
 	} `json:"defaultMsg"`
 	GroupWhiteList []string `json:"groupWhiteList"`
 	Cron struct {
-		TmpCleanCron string `json:"tmpCleanCron"`
+		CronDaily string `json:"cronDaily"`
+		CronPerFM string `json:"cronPerFM"`
 	}
 	RabLogConfig struct {
 		Maxsize int `json:"maxsize"`

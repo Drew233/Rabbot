@@ -39,3 +39,21 @@ type Cal_data struct {
 	Success bool `json:"success`
 	Url string `json:"url`
 }
+
+// 色图API
+// https://img.jitsu.top/#/
+var SetuUrl = "https://moe.jitsu.top/img/?sort=setu&type=json"
+/*
+返回数据格式
+{
+    "code": 200,
+    "alert": "别整天搁那儿爬来爬去，小孩子吗？API不是做给你爬的，我希望API能发挥它本身的作用，爬点涩图对你有什么好处？",
+    "pics": [
+        "https://pic.rmb.bdstatic.com/bjh/497b235dec5329bbf3eee43cfe539975.jpeg"
+    ]
+}
+*/
+type SetuData struct {
+	Code int `json:"code"`
+	Pics []string `json:"pics"`
+}
