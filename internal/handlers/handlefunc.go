@@ -21,8 +21,18 @@ func HandleRequestText(reqStruct *common.RequestStruct) (*common.ReplyStruct, er
 	}
 
 	if !rabmod.FuncMap[reqStruct.RequestTxt].IsValid() {
-		// 不是内置指令，请求文心一言 TODO
-		return &common.ReplyStruct{common.MsgTxt, config.RabConfig.DefaultMsg.DullMsg}, nil
+		// 不是内置指令，请求通义千问
+		responseTxt, err := rabmod.GetTyqwReply(reqStruct.RequestTxt)
+		if err != nil {
+			if err.Error() == "请求成功，但响应失败" {
+				// 如果是接口调用失败，不用返回“麻辣秃头”
+				return &common.ReplyStruct{common.MsgTxt, common.UnknownReply}, nil
+			} else if err.Error() == "invalid token"{ 
+				return &common.ReplyStruct{common.MsgTxt, config.RabConfig.DefaultMsg.DullMsg}, nil
+			}
+			return &common.ReplyStruct{}, err
+		}
+		return &common.ReplyStruct{common.MsgTxt, responseTxt}, nil
 	}
 
 	if config.RabConfig.Features[reqStruct.RequestTxt].Enable != true || config.RabConfig.Features[reqStruct.RequestTxt].FeatureGpBlist[reqStruct.Groupname] == true {

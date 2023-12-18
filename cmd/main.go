@@ -45,7 +45,7 @@ func main() {
 
 	// 启动一个goroutine(并发)开启定时任务
 	// 1. 每天凌晨删除/data/tmp/目录下的文件
-	go scheduler.RunDailyFileCleanup()
+	go scheduler.RunSheduler()
 
 	log.RabLog.Infof("Init task finished, begin run rabbot, now config is %v", config.RabConfig)
 

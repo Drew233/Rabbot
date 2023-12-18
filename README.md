@@ -91,6 +91,8 @@ $ go mod tidy
         // errorMsg 出现内部错误时候的回复
 	},
     // defaultMsg 默认回复消息
+	"tyqwToken": "{Personal_token}",
+	// 通义千问token，可自行前往官网获取。不填的话除指令外默认只回复默认回复
 	"groupWhiteList" : [
 		"一群单身狗",
 		"OW灌水群"
