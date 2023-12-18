@@ -22,6 +22,7 @@ type RabConfigStruct struct {
 		PaiMsg []string `json:"paiMsg"`
 	} `json:"defaultMsg"`
 	TyqwToken string `json:"tyqwToken"`
+	TyqwMaxhis int `json:"tyqwMaxhis"`
 	GroupWhiteList []string `json:"groupWhiteList"`
 	Cron struct {
 		CronDaily string `json:"cronDaily"`

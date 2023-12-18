@@ -2,7 +2,6 @@ package rabmod
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"errors"
@@ -13,23 +12,47 @@ import (
 	"rabbot/internal/common"
 )
 
+var messHistory []common.TyqwMessage
+
+// 导出重置对话接口
+func init() {
+	common.FuncNameMap["DestroyHistory"] = DestroyHistory
+}
+
+func DestroyHistory(uname, uuid string) (*common.ReplyStruct, error) {
+	messHistory = messHistory[:0]
+	return &common.ReplyStruct{common.MsgTxt, "对话已经重置啦~欢迎继续和我聊天哟"}, nil
+}
+
 // 请求通义千问
 func GetTyqwReply(content string) (string, error) {
+
+	messHistory = append(messHistory, common.TyqwMessage{Role: "user", Content: content})
+
+	// 检查对话历史长度
+	if len(messHistory) > config.RabConfig.TyqwMaxhis {
+		// 删除最旧的元素
+		messHistory = messHistory[:0]
+	}
+
 	// 准备要发送的数据
-	data := []byte(fmt.Sprintf(`{
-		"model": "qwen-turbo",
-		"input": {
-			"messages": [
-				{
-					"role": "user",
-					"content": "%s"
-				}
-			]
-		}
-	}`, content))
+	data := common.TyqwInput{
+		Model:    "qwen-turbo",
+		Input: struct {
+			Messages []common.TyqwMessage `json:"messages"`
+		}{
+			Messages: messHistory,
+		},
+	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		log.RabLog.Errorf("创建请求失败: %v", err)
+		return "", err
+	}
 
 	// 创建一个请求
-	req, err := http.NewRequest("POST", common.TyqwApiUrl, bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", common.TyqwApiUrl, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.RabLog.Errorf("创建请求失败: %v", err)
 		return "", err
@@ -74,5 +97,6 @@ func GetTyqwReply(content string) (string, error) {
 	}
 
 	// 提取 text 字段内容并返回
+	messHistory = append(messHistory, common.TyqwMessage{Role: "assistant", Content: response.Output.Text})
 	return response.Output.Text, nil
 }

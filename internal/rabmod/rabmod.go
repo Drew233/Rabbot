@@ -15,10 +15,6 @@ func ModInit() {
 		log.RabLog.Info(feaStruct.Entry)
 		
 		feaFunc := reflect.ValueOf(common.FuncNameMap[feaStruct.Entry])
-		log.RabLog.Info(feaFunc)
-		log.RabLog.Info(reflect.TypeOf(feaFunc))
-		log.RabLog.Info(feaFunc.IsValid())
-		log.RabLog.Info(feaFunc.Kind())
 
 		if feaFunc.IsValid() && feaFunc.Kind() == reflect.Func {
 			FuncMap[feaName] = feaFunc
