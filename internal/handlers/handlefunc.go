@@ -2,18 +2,14 @@ package handlers
 
 import (
 	"fmt"
+	"reflect"
 	// "strings"
-	"rabbot/internal/mods/drlots"
-	"rabbot/internal/mods/fishcal"
+	"rabbot/internal/rabmod"
 	"rabbot/internal/common"
 	"rabbot/internal/log"
 	"rabbot/config"
 )
 
-var funcMap = map[string] func (uname, uuid string) (*common.ReplyStruct, error) {
-	"抽签": drlots.DrawLots,
-	"摸鱼日历": fishcal.GetFishCal,
-}
 
 func HandleRequestText(reqStruct *common.RequestStruct) (*common.ReplyStruct, error) {
 	var reply *common.ReplyStruct
@@ -24,7 +20,7 @@ func HandleRequestText(reqStruct *common.RequestStruct) (*common.ReplyStruct, er
 		return &common.ReplyStruct{common.MsgTxt, common.DefaultReply[reqStruct.RequestTxt]}, nil
 	}
 
-	if funcMap[reqStruct.RequestTxt] == nil {
+	if !rabmod.FuncMap[reqStruct.RequestTxt].IsValid() {
 		// 不是内置指令，请求文心一言 TODO
 		return &common.ReplyStruct{common.MsgTxt, config.RabConfig.DefaultMsg.DullMsg}, nil
 	}
@@ -35,7 +31,16 @@ func HandleRequestText(reqStruct *common.RequestStruct) (*common.ReplyStruct, er
 		return &common.ReplyStruct{common.MsgTxt, fmt.Sprintf(common.FeatureDisabled, reqStruct.RequestTxt)}, nil
 	}
 
-	if reply, err = funcMap[reqStruct.RequestTxt](reqStruct.Uname, reqStruct.Uuid); err != nil {
+	args := []reflect.Value{
+		reflect.ValueOf(reqStruct.Uname),
+		reflect.ValueOf(reqStruct.Uuid),
+	}
+	result := rabmod.FuncMap[reqStruct.RequestTxt].Call(args)
+
+	reply = result[0].Interface().(*common.ReplyStruct)
+	errData := result[1].Interface()
+	if errData != nil {
+		err = result[1].Interface().(error)
 		return &common.ReplyStruct{}, err
 	}
 

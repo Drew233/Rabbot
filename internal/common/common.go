@@ -11,5 +11,10 @@ var (
 	FeatureDisabled = "嘿，您猜怎么着，我有%s的功能，但就是不给你用"  // 功能未启用提示语
 	DefaultReply = map[string]string {
 		"我吃柠檬": "兔兔那么可爱，怎么可以吃兔兔",
-	}
+	}							// 默认对话
+	FuncNameMap map[string]interface{}
 )
+
+func init() {
+	FuncNameMap = make(map[string]interface{})
+}

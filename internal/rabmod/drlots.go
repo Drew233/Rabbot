@@ -1,7 +1,7 @@
 /*
 	调用抽签api接口，实现抽签解签
 */
-package drlots
+package rabmod
 
 import (
 	"fmt"
@@ -12,6 +12,10 @@ import (
 	"rabbot/internal/common"
 	"rabbot/internal/rabhttp"
 )
+
+func init() {
+	common.FuncNameMap["DrawLots"] = DrawLots
+}
 
 func genRandom(max int) int {
 	// 设置随机数种子
