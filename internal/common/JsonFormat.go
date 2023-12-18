@@ -57,3 +57,16 @@ type SetuData struct {
 	Code int `json:"code"`
 	Pics []string `json:"pics"`
 }
+
+// 通义千问api
+// https://help.aliyun.com/zh/dashscope/developer-reference/api-details?spm=a2c4g.11186623.0.i13
+/* 返回数据格式
+{"output":{"finish_reason":"stop","text":"你好！有什么我可以帮助你的吗？"},"usage":{"total_tokens":9,"output_tokens":8,"input_tokens":1},"request_id":"7b76e2a7-aef2-9f57-ac36-34ca28b439d9"}
+*/
+var TyqwApiUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+type TyqwResponse struct {
+	Output struct {
+		FinishReason string `json:"finish_reason"`
+		Text         string `json:"text"`
+	} `json:"output"`
+}

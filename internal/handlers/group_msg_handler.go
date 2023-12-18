@@ -54,7 +54,6 @@ func (g *GroupMessageHandler) ReplyText(msg *openwechat.Message) error {
 
 	log.RabLog.Debugf("Received Group %v Text Msg : %v", groupName, msg.Content)
 
-	log.RabLog.Info(msg.IsPaiYiPai(), msg.IsTickled(), msg.IsTickledMe())
 	if msg.IsPaiYiPai() || msg.IsTickled() || msg.IsTickledMe() {
 		if paiCnt + 1 < len(config.RabConfig.DefaultMsg.PaiMsg) {
 			paiCnt++
