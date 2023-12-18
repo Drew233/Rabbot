@@ -8,6 +8,7 @@ import (
 	"rabbot/internal/entry"
 	"rabbot/internal/mysql"
 	"rabbot/internal/common"
+	"rabbot/internal/rabmod"
 	"rabbot/internal/sigparse"
 	"rabbot/internal/hotdebug"
 	"rabbot/internal/scheduler"
@@ -29,6 +30,9 @@ func main() {
 
 	// 日志初始化
 	log.RabLogInit()
+
+	// 功能模块加载
+	rabmod.ModInit()
 
 	// 注册SIGINT, SIGTERM信号处理函数
 	sigparse.SetupCloseHandler()

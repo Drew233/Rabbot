@@ -14,20 +14,38 @@ RabBot是基于[openwechat](https://github.com/eatMoreApple/openwechat)实现的
 
 ## 内容列表
 
-- [背景](#背景)
-- [安装](#安装)
-- [使用说明](#使用说明)
-- [徽章](#徽章)
-- [示例](#示例)
-- [相关仓库](#相关仓库)
-- [维护者](#维护者)
-- [使用许可](#使用许可)
+- [RabBot](#rabbot)
+	- [内容列表](#内容列表)
+	- [背景](#背景)
+	- [使用需知](#使用需知)
+	- [安装](#安装)
+		- [下载代码到本地](#下载代码到本地)
+		- [安装go和git](#安装go和git)
+		- [安装框架依赖的模块](#安装框架依赖的模块)
+	- [使用说明](#使用说明)
+		- [配置文件说明](#配置文件说明)
+		- [go run](#go-run)
+		- [go build](#go-build)
+		- [调试](#调试)
+	- [徽章](#徽章)
+	- [新增插件](#新增插件)
+	- [相关仓库](#相关仓库)
+	- [维护者](#维护者)
+	- [如何贡献](#如何贡献)
+	- [使用许可](#使用许可)
 
 ## 背景
 
 很早之前就想做个微信机器人玩玩，当时只看到了主流的`wechaty`，但是登陆限制太多，又完全联系不上开源激励计划，所以一直没有机会
 
 偶然间看到`openwechat`的打破登录限制，于是就上头了，Go是边做边学的，代码问题可能会有不少，欢迎提建议
+
+## 使用需知
+> [!WARNING]
+> 1. 采用的openwechat提供的SDK，桌面微信协议
+> 2. 使用机器人需要一个微信号，扫码登录且手机不可退出登录（有需要的话可以断网退出，具体操作可以在网上搜到）
+> 3. 作为机器人的微信号需要实名认证，在实名认证是会让绑银行卡
+> 4. 会有概率被封号
 
 ## 安装
 
@@ -38,6 +56,8 @@ $ git clone https://github.com/Drew233/Rabbot.git
 ```
 或者
 Download ZIP下载源码
+
+或者前往Releases下载源码或可执行文件（推荐源码）
 
 ### 安装go和git
 运行依赖于 [go](https://golang.google.cn/) 和 [git](https://npmjs.com)
@@ -97,6 +117,8 @@ $ go mod tidy
         // 摸鱼日历 功能名称，这里是直接匹配的指令名
 			"enable": true,
             // enable 功能是否开启
+			"entry": "GetFishCal",
+			// entry 调用插件接口
 			"groupBlackList": {
 				"一群单身狗": true,
 				"洋佬带下俺8": true
@@ -105,6 +127,7 @@ $ go mod tidy
 		},
 		"抽签": {
 			"enable": true,
+			"entry": "DrawLots",
 			"groupBlackList": {
 				"OW灌水群": true
 			}
@@ -155,25 +178,48 @@ Usage of rabbot.exe:
         program data file path (default "./data")
 ```
 
-运行起来之后会给出一个链接扫码登陆即可，但是手机上的微信退出的话机器人会一起退出。
-
-解决方法：
-
-1. 两个手机
-2. 手机断网后退出登录，然后登陆其他账号再联网（退出登录时候需要多等一会）
+> [!NOTE]
+> 运行起来之后会给出一个链接扫码登陆即可，但是手机上的微信退出的话机器人会一起退出。
+> 解决方法：
+> 1. 两个手机
+> 2. 手机断网后退出登录，然后登陆其他账号再联网（退出登录时候需要多等一会）
 
 ### 调试
 在`./rabdata/tmp/`目录下新建一个文件`RabDbg`，源码中Debug级别的日志就会输出
-
 
 ## 徽章
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
+## 新增插件
 
-## 示例
+本框架下的插件业务代码统一放在rabmod包中（当前仅支持全匹配）
 
-如果要新增一个插件，可以参考`internal/mods`下面的package
+在本框架下添加插件需要以下操作（以抽签插件为例）
+1. 将业务代码放到/rabbot/internal/rabmod/下（新增一个drlots.go）
+2. 业务代码中添加init，将函数入口信息放在全局的map中（这里map的key要能和配置文件中的entry对应上）
+```go
+func init() {
+	common.FuncNameMap["DrawLots"] = DrawLots
+}
+```
+3. 业务代码coding...
+> [!IMPORTANT]
+> 插件入口函数的参数和返回值需和框架中保持一致
+```go
+func DrawLots(uname, uuid string) (*common.ReplyStruct, error)
+```
+1. 修改配置文件，在features下添加对应插件的信息即可
+```json
+
+		"抽签": {
+			"enable": true,
+			"entry": "DrawLots",
+			"groupBlackList": {
+				"OW灌水群": true
+			}
+		}
+```
 
 ## 相关仓库
 

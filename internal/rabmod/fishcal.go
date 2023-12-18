@@ -1,6 +1,6 @@
 /* 调用摸鱼日历接口，返回摸鱼日历 */
 
-package fishcal
+package rabmod
 
 import (
 	"os"
@@ -9,6 +9,10 @@ import (
 	"rabbot/internal/common"
 	"rabbot/internal/rabhttp"
 )
+
+func init() {
+	common.FuncNameMap["GetFishCal"] = GetFishCal
+}
 
 // 下载摸鱼日历并返回
 func GetFishCal(uname, uuid string) (*common.ReplyStruct, error) {

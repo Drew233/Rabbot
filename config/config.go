@@ -8,6 +8,7 @@ import (
 
 type featureStruct struct {
 	Enable bool `json:"enable"`
+	Entry string `json:"entry"`
 	FeatureGpBlist map[string]bool `json:"groupBlackList"`
 }
 
