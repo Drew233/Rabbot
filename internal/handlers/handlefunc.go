@@ -22,7 +22,7 @@ func HandleRequestText(reqStruct *common.RequestStruct) (*common.ReplyStruct, er
 
 	if !rabmod.FuncMap[reqStruct.RequestTxt].IsValid() {
 		// 不是内置指令，请求通义千问
-		responseTxt, err := rabmod.GetTyqwReply(reqStruct.RequestTxt)
+		responseTxt, err := rabmod.GetTyqwReply(reqStruct.RequestTxt, reqStruct.Uuid)
 		if err != nil {
 			if err.Error() == "请求成功，但响应失败" {
 				// 如果是接口调用失败，不用返回“麻辣秃头”

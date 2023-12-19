@@ -82,6 +82,7 @@ func (g *GroupMessageHandler) ReplyText(msg *openwechat.Message) error {
 	
 	if err != nil {
 		log.RabLog.Errorf("get sender in group error :%v", err)
+		msg.ReplyText(config.RabConfig.DefaultMsg.ErrMsg)
 		return err
 	}
 
