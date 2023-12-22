@@ -6,8 +6,9 @@ import (
 	_log "log"
 )
 
-type featureStruct struct {
+type FeatureStruct struct {
 	Enable bool `json:"enable"`
+	Entry string `json:"entry"`
 	FeatureGpBlist map[string]bool `json:"groupBlackList"`
 }
 
@@ -17,11 +18,15 @@ type RabConfigStruct struct {
 	Datadir string `json:"Datadir"`
 	DefaultMsg struct {
 		DullMsg string `json:"dullMsg"`
-		ErrMsg string `json:"ErrorMsg"`
+		ErrMsg string `json:"errorMsg"`
+		PaiMsg []string `json:"paiMsg"`
 	} `json:"defaultMsg"`
+	TyqwToken string `json:"tyqwToken"`
+	TyqwMaxhis int `json:"tyqwMaxhis"`
 	GroupWhiteList []string `json:"groupWhiteList"`
 	Cron struct {
-		TmpCleanCron string `json:"tmpCleanCron"`
+		CronDaily string `json:"cronDaily"`
+		CronPerFM string `json:"cronPerFM"`
 	}
 	RabLogConfig struct {
 		Maxsize int `json:"maxsize"`
@@ -30,7 +35,7 @@ type RabConfigStruct struct {
 		Compress bool `json:"compress"`
 	} `json:"rablog"`
 	// Features map[string]bool `json:"features"`
-	Features map[string]featureStruct `json:"feature"`
+	Features map[string]FeatureStruct `json:"feature"`
 	MysqlConfig struct {
 		Username string `json:"username"`
 		Password string `json:"password"`

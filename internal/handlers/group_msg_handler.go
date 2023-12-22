@@ -10,6 +10,7 @@ import (
 )
 
 var _ MessageHandlerInterface = (*GroupMessageHandler)(nil)
+var paiCnt = 0
 
 // GroupMessageHandler 群消息处理
 type GroupMessageHandler struct {
@@ -17,7 +18,12 @@ type GroupMessageHandler struct {
 
 // handle 处理消息
 func (g *GroupMessageHandler) handle(msg *openwechat.Message) error {
-	groupName := common.GetGroupName(msg)
+	groupName, terr := common.GetGroupName(msg)
+	if terr != "" {
+		log.RabLog.Errorf("get group name failed at %s", terr)
+		return nil
+	}
+
 	if config.RabConfig.WbList[groupName] != true {
 		log.RabLog.Debugf("Group => {%s} not support, no response", groupName)
 		return nil
@@ -40,9 +46,24 @@ func (g *GroupMessageHandler) ReplyText(msg *openwechat.Message) error {
 	var reply *common.ReplyStruct
 
 	// 接收群消息
-	groupName := common.GetGroupName(msg)
+	groupName, terr := common.GetGroupName(msg)
+	if terr != "" {
+		log.RabLog.Errorf("get group name failed at %s", terr)
+		return nil
+	}
 
 	log.RabLog.Debugf("Received Group %v Text Msg : %v", groupName, msg.Content)
+
+	if msg.IsPaiYiPai() || msg.IsTickled() || msg.IsTickledMe() {
+		if paiCnt + 1 < len(config.RabConfig.DefaultMsg.PaiMsg) {
+			paiCnt++
+		}
+		msg.ReplyText(config.RabConfig.DefaultMsg.PaiMsg[paiCnt])
+		return nil
+	}
+	if paiCnt - 1 >= 0 {
+		paiCnt--
+	}
 
 	// 不是@的不处理
 	if !msg.IsAt() {
@@ -61,14 +82,22 @@ func (g *GroupMessageHandler) ReplyText(msg *openwechat.Message) error {
 	
 	if err != nil {
 		log.RabLog.Errorf("get sender in group error :%v", err)
+		msg.ReplyText(config.RabConfig.DefaultMsg.ErrMsg)
 		return err
 	}
 
 	reply, err = HandleRequestText(common.GenRequestStruct(groupSender.DisplayName,
 														   groupSender.UserName,
 														   groupName,
-														   requestText))
+														   requestText,
+														   "",
+														   msg))
 	if err != nil {
+		// 如果返回的错误信息是No need reponse，不需要做处理
+		// 这里设计的不太好，后面有空再改吧
+		if err.Error() == "No need response" {
+			return nil
+		}
 		log.RabLog.Errorf("gpt request error: %v", err)
 		msg.ReplyText(config.RabConfig.DefaultMsg.ErrMsg)
 		return err

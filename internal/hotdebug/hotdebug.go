@@ -41,7 +41,6 @@ func HotDebugInit()	error {
 			select {
 			case ev := <-watch.Events:
 				{
-					fmt.Println(common.IsDbgMode())
 					if (ev.Op&fsnotify.Create == fsnotify.Create && (common.IsDbgMode() == true)) {
 						log.RabLog.Info("Debug flag created, change log level to DebugLevel")
 						log.RabLog.SetLevel(logrus.DebugLevel)
