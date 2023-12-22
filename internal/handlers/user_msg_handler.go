@@ -50,7 +50,9 @@ func (g *UserMessageHandler) ReplyText(msg *openwechat.Message) error {
 	reply, err = HandleRequestText(common.GenRequestStruct(sender.DisplayName,
 														   sender.UserName,
 														   "",
-														   requestText))
+														   requestText,
+														   "",
+														   msg))
 	if err != nil {
 		log.RabLog.Errorf("gpt request error: %v", err)
 		msg.ReplyText(config.RabConfig.DefaultMsg.ErrMsg)

@@ -89,8 +89,15 @@ func (g *GroupMessageHandler) ReplyText(msg *openwechat.Message) error {
 	reply, err = HandleRequestText(common.GenRequestStruct(groupSender.DisplayName,
 														   groupSender.UserName,
 														   groupName,
-														   requestText))
+														   requestText,
+														   "",
+														   msg))
 	if err != nil {
+		// 如果返回的错误信息是No need reponse，不需要做处理
+		// 这里设计的不太好，后面有空再改吧
+		if err.Error() == "No need response" {
+			return nil
+		}
 		log.RabLog.Errorf("gpt request error: %v", err)
 		msg.ReplyText(config.RabConfig.DefaultMsg.ErrMsg)
 		return err

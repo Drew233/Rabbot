@@ -29,7 +29,7 @@ type DrlotsData struct {
 }
 
 // 摸鱼日历API
-var CalenderUrl = "https://api.vvhan.com/api/moyu?type=json"
+// var CalenderUrl = "https://api.vvhan.com/api/moyu?type=json" //已失效
 /*
 返回数据格式
 {"success":true,"url":"https:\/\/web-static.4ce.cn\/storage\/bucket\/v1\/2532bc63e3266c483d6ecf52be96175a.jpg"}
@@ -39,6 +39,8 @@ type Cal_data struct {
 	Success bool `json:"success`
 	Url string `json:"url`
 }
+
+var CalenderUrl = "https://api.lolimi.cn/API/moyu/"
 
 // 色图API
 // https://img.jitsu.top/#/

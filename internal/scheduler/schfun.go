@@ -28,9 +28,9 @@ func deleteFiles(dirPath string) {
 		if !info.IsDir() {
 			err := os.Remove(path)
 			if err != nil {
-				log.RabLog.Errorf("Remove file %s failed, %v", dirPath, err)
+				log.RabLog.Errorf("Remove file %s failed, %v", path, err)
 			} else {
-				log.RabLog.Infof("Remove file %s successed", dirPath)
+				log.RabLog.Infof("Remove file %s successed", path)
 			}
 		}
 

@@ -14,7 +14,7 @@ func init() {
 	common.FuncNameMap["GetSetu"] = GetSetu
 }
 // 下载色图并返回
-func GetSetu(uname, uuid string) (*common.ReplyStruct, error) {
+func GetSetu(requestStruct *common.RequestStruct) (*common.ReplyStruct, error) {
 	var stData common.SetuData
 	if err := rabhttp.RabHttpGetJson(common.SetuUrl, &stData); err != nil {
 		log.RabLog.Errorf("Get fish calender api failed, %v", err)

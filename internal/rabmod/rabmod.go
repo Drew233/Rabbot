@@ -11,9 +11,16 @@ import (
 var FuncMap map[string]reflect.Value = make(map[string]reflect.Value)
 
 func ModInit() {
+	// 把内置的指令加载到配置中
+	for commond, entry := range common.InternalFuncMap {
+		config.RabConfig.Features[commond] = config.FeatureStruct{
+			Enable: true,
+			Entry: entry,
+			FeatureGpBlist: map[string]bool{},
+		}
+	}
+	// 加载配置文件中的模块
 	for feaName, feaStruct := range config.RabConfig.Features {
-		log.RabLog.Info(feaStruct.Entry)
-		
 		feaFunc := reflect.ValueOf(common.FuncNameMap[feaStruct.Entry])
 
 		if feaFunc.IsValid() && feaFunc.Kind() == reflect.Func {

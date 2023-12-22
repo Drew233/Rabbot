@@ -15,12 +15,12 @@ func init() {
 }
 
 // 下载摸鱼日历并返回
-func GetFishCal(uname, uuid string) (*common.ReplyStruct, error) {
-	var cal_data common.Cal_data
-	if err := rabhttp.RabHttpGetJson(common.CalenderUrl, &cal_data); err != nil {
-		log.RabLog.Errorf("Get fish calender api failed, %v", err)
-		return nil, err
-	}
+func GetFishCal(requestStruct *common.RequestStruct) (*common.ReplyStruct, error) {
+	// var cal_data common.Cal_data
+	// if err := rabhttp.RabHttpGetJson(common.CalenderUrl, &cal_data); err != nil {
+	// 	log.RabLog.Errorf("Get fish calender api failed, %v", err)
+	// 	return nil, err
+	// }
 
 	tmpFilePath := common.GenTmpFilePath()
 
@@ -31,8 +31,8 @@ func GetFishCal(uname, uuid string) (*common.ReplyStruct, error) {
 		log.RabLog.Errorf("Check tmpFile failed, %v", err)
 	}
 
-	if err:= rabhttp.RabHttpGetPic(cal_data.Url, tmpFilePath); err != nil {
-		log.RabLog.Errorf("Download pic from %s failed\n, %v", cal_data.Url, err)
+	if err:= rabhttp.RabHttpGetPic(common.CalenderUrl, tmpFilePath); err != nil {
+		log.RabLog.Errorf("Download pic from %s failed\n, %v", common.CalenderUrl, err)
 		return nil, err
 	}
 

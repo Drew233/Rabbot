@@ -36,8 +36,7 @@ func genUrl() string {
 }
 
 // 抽签
-func DrawLots(uname, uuid string) (*common.ReplyStruct, error) {
-
+func DrawLots(requestStruct *common.RequestStruct) (*common.ReplyStruct, error) {
 	url := genUrl()
 
 	var data common.DrlotsData

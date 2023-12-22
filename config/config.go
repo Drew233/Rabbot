@@ -6,7 +6,7 @@ import (
 	_log "log"
 )
 
-type featureStruct struct {
+type FeatureStruct struct {
 	Enable bool `json:"enable"`
 	Entry string `json:"entry"`
 	FeatureGpBlist map[string]bool `json:"groupBlackList"`
@@ -35,7 +35,7 @@ type RabConfigStruct struct {
 		Compress bool `json:"compress"`
 	} `json:"rablog"`
 	// Features map[string]bool `json:"features"`
-	Features map[string]featureStruct `json:"feature"`
+	Features map[string]FeatureStruct `json:"feature"`
 	MysqlConfig struct {
 		Username string `json:"username"`
 		Password string `json:"password"`

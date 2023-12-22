@@ -36,7 +36,8 @@ func CleanOuttimeHistory() {
 }
 
 // 重置对话接口
-func DestroyHistory(uname, uuid string) (*common.ReplyStruct, error) {
+func DestroyHistory(requestStruct *common.RequestStruct) (*common.ReplyStruct, error) {
+	uname, uuid := requestStruct.Uname, requestStruct.Uuid
 	messHistoryMap[uuid] = messHistoryMap[uuid][:0]
 	log.RabLog.Infof("user %s destory history success", uname)
 	return &common.ReplyStruct{common.MsgTxt, "对话已经重置啦~欢迎继续和我聊天哟"}, nil
@@ -61,7 +62,7 @@ func GetTyqwReply(content, uuid string) (string, error) {
 
 	// 准备要发送的数据
 	data := common.TyqwInput{
-		Model:    "qwen-turbo",
+		Model:    "qwen-max",
 		Input: struct {
 			Messages []common.TyqwMessage `json:"messages"`
 		}{

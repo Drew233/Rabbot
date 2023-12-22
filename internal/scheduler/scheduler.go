@@ -28,6 +28,8 @@ func RunSheduler() {
 		deletePicFiles(common.PicDir)
 		// 清理通义千问缓存
 		rabmod.CleanOuttimeHistory()
+		// 清理超时的赛马比赛缓存
+		rabmod.CleanOuttimeComp()
 	})
 	
 	if err != nil {

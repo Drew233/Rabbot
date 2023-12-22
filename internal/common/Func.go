@@ -9,6 +9,9 @@ import (
 	"github.com/eatmoreapple/openwechat"
 )
 
+// 内置的指令处理函数，不受配置文件限制，内置的函数默认权限全部放开，使用前需要考虑权限放开是否会对业务产生影响
+var InternalFuncMap map[string]string = make(map[string]string)
+
 /*
 	@Func 获取群聊名称
 	@param msg openwechat框架中的msg结构
@@ -118,4 +121,17 @@ func DirUpdate(dirData string) {
 	LogDir = DataDir + "/log"	// 日志目录
 	LogFilename = LogDir + "/rabbot.log"  // 日志文件名
 	DebugFlag = TmpDir + "/RabDbg"  // 调试标记
+}
+
+/*
+	@Func 翻转字符串
+	@param string 待翻转字符串
+	@return string 翻转后的字符串
+*/
+func ReverseString(str string) string {
+	runes := []rune(str)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
 }
