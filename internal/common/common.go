@@ -25,7 +25,7 @@ var (
 	HorseCompNotEnough = "一场比赛至少有三人参加"
 	HorseCompTooMuch = "本场比赛参与人数已达上限，比赛马上开始"
 	HorseCompJoinEd = "您已经加入了本场比赛，请勿重复参加"
-	XiGameStr = "🕹游戏名：%s\n🕛️开始时间：%s\n🕛️结束时间：%s\n😻永久入库：%s\n🔗领取链接：%s\n"
+	XiGameStr = "🕹游戏名：%s\n🕛️开始时间：%s\n🕛️结束时间：%s\n🔗领取链接：%s\n"
 )
 
 func init() {

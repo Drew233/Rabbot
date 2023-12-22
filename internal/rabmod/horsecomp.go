@@ -94,19 +94,23 @@ func replyHorsesPos(msg *openwechat.Message, groupname string) {
 				flag = 1
 			} else if i == compLength - 1{
 				if flag == 0 {
-					horseRoad += "H"	// 以H代表马
-				} else {
-					horseRoad += "_"
+					horseRoad += "E"	// 以E代表终点
 				}
 			} else {
 				horseRoad += "_"
 			}
 		}
+		if flag == 0 {
+			horseRoad += "H"
+		} else {
+			horseRoad += "E"
+		}
 
 		// 因为Reverse会导致部分emoji格式发生变化，所以先以字母代替然后再替换成emoji
 		horseRoad = strings.Replace(common.ReverseString(horseRoad), "H", horse.horseEmoji, -1)
+		horseRoad = strings.Replace(horseRoad, "E", "🚩", -1)
 		// 设置起点和终点的emoji
-		str += "🚩" + horseRoad + "🏁" + "\n"
+		str += horseRoad + "🏁" + "\n"
 	}
 
 	msg.ReplyText(str)
@@ -179,6 +183,7 @@ func beginHorseComp(msg *openwechat.Message, groupname string) {
 				}
 			} 
 		}
+
 		// 每次跑完响应此时所有马的位置
 		replyHorsesPos(msg, groupname)
 
