@@ -34,7 +34,12 @@ func (g *UserMessageHandler) ReplyText(msg *openwechat.Message) error {
 	var reply *common.ReplyStruct
 
 	// 接收私聊消息
-	sender, _ := msg.Sender()
+	sender, err := msg.Sender()
+	if err != nil {
+		log.RabLog.Errorf("gpt sender error: %v", err)
+		msg.ReplyText(config.RabConfig.DefaultMsg.ErrMsg)
+		return err
+	}
 
 	requestText := strings.Trim(msg.Content, "\n")
 	if sender.DisplayName == "" {

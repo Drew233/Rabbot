@@ -5,6 +5,7 @@ import (
 	"github.com/robfig/cron"
 
 	"rabbot/internal/log"
+	"rabbot/internal/rabmod"
 	"rabbot/internal/common"
 	"rabbot/config"
 )
@@ -23,7 +24,10 @@ func RunSheduler() {
 	}
 	// 五分钟执行一次的任务
 	err = CronClean.AddFunc(config.RabConfig.Cron.CronPerFM, func(){
+		// 清理图片文件夹
 		deletePicFiles(common.PicDir)
+		// 清理通义千问缓存
+		rabmod.CleanOuttimeHistory()
 	})
 	
 	if err != nil {

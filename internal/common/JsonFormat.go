@@ -70,3 +70,14 @@ type TyqwResponse struct {
 		Text         string `json:"text"`
 	} `json:"output"`
 }
+type TyqwMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type TyqwInput struct {
+	Model    string    `json:"model"`
+	Input struct {
+		Messages []TyqwMessage	`json:"messages"`
+	}`json:"input"`
+}
