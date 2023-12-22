@@ -1,11 +1,12 @@
 package rabmod
 
 import (
-	"bytes"
 	"time"
-	"io/ioutil"
-	"net/http"
+	"bytes"
 	"errors"
+	"context"
+	"net/http"
+	"io/ioutil"
 	"encoding/json"
 
 	"rabbot/config"
@@ -82,6 +83,10 @@ func GetTyqwReply(content, uuid string) (string, error) {
 		log.RabLog.Errorf("创建请求失败: %v", err)
 		return "", err
 	}
+
+	// 默认三秒超时
+	ctx, _  := context.WithTimeout(context.Background(), time.Second * 3)
+	req.WithContext(ctx)
 
 	// 设置请求头
 	req.Header.Set("Authorization", "Bearer " + config.RabConfig.TyqwToken)

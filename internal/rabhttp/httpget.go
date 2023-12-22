@@ -4,6 +4,7 @@ package rabhttp
 import (
 	"os"
 	"io"
+	"time"
 	"net/http"
 	"encoding/json"
 
@@ -18,7 +19,9 @@ import (
 	@return error 如果出错的话返回错误信息
 */
 func RabHttpGetJson(url string, jsonStruct interface{}) error {
-	resp, err := http.Get(url)
+	// 默认三秒超时
+	cli := http.Client{Timeout: 3 * time.Second}
+	resp, err := cli.Get(url)
 	if err != nil {
 		log.RabLog.Errorf("Get %s failed, %v", url, err)
 		return err
@@ -46,7 +49,9 @@ func RabHttpGetJson(url string, jsonStruct interface{}) error {
 	@param picPath 下载下来的图片保存的路径
 */
 func RabHttpGetPic(url, picPath string) error {
-	resp, err := http.Get(url)
+	// 默认三秒超时
+	cli := http.Client{Timeout: 3 * time.Second}
+	resp, err := cli.Get(url)
 	if err != nil {
 		log.RabLog.Errorf("Download {%s} picture failed", url)
 		return err
