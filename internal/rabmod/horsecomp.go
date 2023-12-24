@@ -33,6 +33,7 @@ type horseBase struct {
 // 赛马全局结构，以群名为key保存在map中
 type groupContentBase struct {
 	status int
+	botNum int
 	// status: 群比赛状态
 	// 0：群第一次使用赛马功能，需要初始化
 	// 1: 还未举办比赛，也未进行比赛
@@ -43,7 +44,9 @@ type groupContentBase struct {
 }
 
 var compLength = 20 // 赛道长度
-var emojiSet = []string{"🐢", "🎠", "🦓", "🦛", "🐎", "🐴", "🦄", "🚽", "🏃‍♂️", "🏃‍♀️", "🦍", "🦇"} // 选手emoji，随机选取 ！！如果修改的话，至少剩三只马 ！！
+
+// 选手emoji，随机选取 ！！如果修改的话，至少剩三只马 ！！！
+var emojiSet = []string{"🐢", "🎠", "🦓", "🦛", "🐎", "🐴", "🦄", "🚽", "🏃‍♂️", "🏃‍♀️", "🦍", "🦇"}
 var groupEmojiSet map[string][]string = make(map[string][]string)	// 群名为key，emojiset为value，主要用于每个群赛马时保证代表用户的emoji不重复
 
 var groupContent map[string]groupContentBase = make(map[string]groupContentBase)	// 赛马全局结构
@@ -92,10 +95,9 @@ func replyHorsesPos(msg *openwechat.Message, groupname string) {
 			if i == horse.pos {
 				horseRoad += "H"
 				flag = 1
-			} else if i == compLength - 1{
-				if flag == 0 {
-					horseRoad += "E"	// 以E代表终点
-				}
+			} else if i == compLength - 1 && flag == 0 {
+				// 如果已经看了每个位置，但是还没看到马，说明马已经到终点了
+				horseRoad += "E"	// 以E代表终点
 			} else {
 				horseRoad += "_"
 			}
@@ -158,7 +160,7 @@ func beginHorseComp(msg *openwechat.Message, groupname string) {
 			}
 		}
 		// 马也会累，速度递减，防止最后冲线时候步幅太大
-		if horseSpeed != 2 {
+		if horseSpeed != 4 {
 			// 速度最少减到2
 			horseSpeed = horseSpeed - 1
 		}
@@ -213,6 +215,7 @@ func HorseComp(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 		// 初始化赛马结构
 		groupContent[groupname] = groupContentBase{
 			status: 1,
+			botNum: 0,
 			timeStamp: time.Now().Unix(),
 			horses: make(map[string]horseBase),
 		}
@@ -231,6 +234,7 @@ func HorseComp(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 	// 更新赛马结构时间戳
 	groupContent[groupname] = groupContentBase{
 		status: groupContent[groupname].status,
+		botNum: groupContent[groupname].botNum,
 		timeStamp: time.Now().Unix(),
 		horses: groupContent[groupname].horses,
 	}
@@ -241,7 +245,7 @@ func HorseComp(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 
 	if requestStruct.Commond == "比赛开始" {
 		requestText = "比赛开始"
-	} else if requestStruct.Commond == "赛马" {
+	} else if requestStruct.Commond == "赛马" && requestText == "" {
 		requestText = "玩法"
 	}
 	switch requestText {
@@ -252,6 +256,7 @@ func HorseComp(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 			groupContent[groupname].horses[uuid] = horseBase{uname, 0, 0, getHorseEmoji(groupname)}
 			groupContent[groupname] = groupContentBase{
 				status: 2,
+				botNum: groupContent[groupname].botNum,
 				timeStamp: time.Now().Unix(),
 				horses: groupContent[groupname].horses,
 			}			
@@ -269,6 +274,7 @@ func HorseComp(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 				tmpTxt += "\n" + common.Dilimiter + common.HorseCompTooMuch
 				groupContent[groupname] = groupContentBase{
 					status: 3,
+					botNum: groupContent[groupname].botNum,
 					timeStamp: time.Now().Unix(),
 					horses: groupContent[groupname].horses,
 				}
@@ -287,11 +293,42 @@ func HorseComp(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 
 		groupContent[groupname] = groupContentBase{
 			status: 3,
+			botNum: groupContent[groupname].botNum,
 			timeStamp: time.Now().Unix(),
 			horses: groupContent[groupname].horses,
 		}
 		go beginHorseComp(msg, groupname)
 		return &common.ReplyStruct{}, errors.New("No need response")
+	case "加入人机":
+		if horseNum == 0 {
+			return &common.ReplyStruct{common.MsgTxt, common.HorseCompNotCreated}, nil
+		}
+		uuid = fmt.Sprintf("%s_clone_%d", uuid, groupContent[groupname].botNum)
+		uname = fmt.Sprintf("bot_%d", groupContent[groupname].botNum)
+		groupContent[groupname] = groupContentBase{
+			status: groupContent[groupname].status,
+			botNum: groupContent[groupname].botNum + 1,
+			timeStamp: time.Now().Unix(),
+			horses: groupContent[groupname].horses,
+		}
+		// 加入人机到map中
+		groupContent[groupname].horses[uuid] = horseBase{uname, 0, 0, getHorseEmoji(groupname)}
+		horseNum = len(groupContent[groupname].horses)
+		tmpTxt := fmt.Sprintf(common.HorseCompJoinBotSuccess, horseNum)
+		if horseNum == len(emojiSet) {
+			// 支持的用户最大数由emojiSet的长度决定，如果已经相等了，直接开始比赛
+			tmpTxt += "\n" + common.Dilimiter + common.HorseCompTooMuch
+			groupContent[groupname] = groupContentBase{
+				status: 3,
+				botNum: groupContent[groupname].botNum,
+				timeStamp: time.Now().Unix(),
+				horses: groupContent[groupname].horses,
+			}
+			// 起一个新的goroutine进行比赛
+			go beginHorseComp(msg, groupname)
+		}
+		return &common.ReplyStruct{common.MsgTxt, tmpTxt}, nil
+
 	case "人机对抗":
 		//调试用
 		if horseNum == 0 {
@@ -302,6 +339,7 @@ func HorseComp(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 			go beginHorseComp(msg, groupname)
 			return &common.ReplyStruct{}, errors.New("No need response")
 		}
+		return &common.ReplyStruct{common.MsgTxt, common.HorseCompRunning}, nil
 	default:
 		return &common.ReplyStruct{common.MsgTxt, fmt.Sprintf(common.UseOfHorseComp, len(emojiSet), len(emojiSet), emojiSet)}, nil
 	}

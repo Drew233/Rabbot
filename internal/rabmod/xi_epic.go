@@ -58,7 +58,7 @@ func getTime(timeStr string) string {
 	return inputTime.Format("2006-01-02")
 }
 
-func updateInfo() error {
+func updateXiInfo() error {
 	url := "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions"
 
 	// 发送HTTP请求
@@ -92,7 +92,7 @@ func XiPlusOne(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 	if _, err := os.Stat(common.XiJsonFile); err == nil {
 		log.RabLog.Debug("File cache exist")
 	} else {
-		if err := updateInfo(); err != nil {
+		if err := updateXiInfo(); err != nil {
 			log.RabLog.Errorf("UpdateXiInfo failed, %v", err)
 			return nil, err
 		}
@@ -135,21 +135,4 @@ func XiPlusOne(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 
 	replyStr := "早买早享受，晚买有折扣，不买🆓免费送\n当前限免🎮：\n" + common.Dilimiter + xiStr + "即将限免🎮：\n" + common.Dilimiter + upXiStr
 	return &common.ReplyStruct{common.MsgTxt, replyStr}, nil
-}
-
-func saveJSON(data interface{}, filename string) error {
-	// 将数据序列化为JSON格式
-	jsonData, err := json.MarshalIndent(data, "", "    ")
-	if err != nil {
-		log.RabLog.Errorf("Error encoding JSON:", err)
-		return err
-	}
-
-	// 将JSON数据写入文件
-	err = ioutil.WriteFile(filename, jsonData, 0644)
-	if err != nil {
-		log.RabLog.Errorf("Error writing to file:", err)
-		return err
-	}
-	return nil
 }
