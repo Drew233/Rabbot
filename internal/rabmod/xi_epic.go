@@ -133,6 +133,12 @@ func XiPlusOne(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 		}
 	}
 
-	replyStr := "早买早享受，晚买有折扣，不买🆓免费送\n当前限免🎮：\n" + common.Dilimiter + xiStr + "即将限免🎮：\n" + common.Dilimiter + upXiStr
+	replyStr := "早买早享受，晚买有折扣，不买🆓免费送\nEpic当前限免🎮：\n" + common.Dilimiter + xiStr + "Epic即将限免🎮：\n" + common.Dilimiter + upXiStr
+
+	steamStr, err := GetSXiInfo()
+	if err == nil {
+		replyStr += steamStr
+	}
+
 	return &common.ReplyStruct{common.MsgTxt, replyStr}, nil
 }

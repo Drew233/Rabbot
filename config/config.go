@@ -26,6 +26,7 @@ type RabConfigStruct struct {
 	GroupWhiteList []string `json:"groupWhiteList"`
 	Cron struct {
 		CronDaily string `json:"cronDaily"`
+		CronPerH  string `json:"cronPerH"`
 		CronPerFM string `json:"cronPerFM"`
 	}
 	RabLogConfig struct {

@@ -9,6 +9,7 @@ var (
 	PicDir = DataDir + "/pic"	// 图片目录
 	LogFilename = LogDir + "/rabbot.log"  // 日志文件名
 	XiJsonFile = TmpDir + "/xi.json"	// 喜加一数据缓存文件名
+	XiSJsonFile = TmpDir + "/xisteam.json"	// steam喜加一缓存文件吗
 	LCDailyFile = TmpDir + "/lc.json"	// 力扣每日一题数据缓存文件名
 	DebugFlag = TmpDir + "/RabDbg"  // 调试标记
 	FeatureDisabled = "嘿，您猜怎么着，我有%s的功能，但就是不给你用"  // 功能未启用提示语

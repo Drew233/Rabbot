@@ -41,3 +41,23 @@ func deleteFiles(dirPath string) {
 		return
 	}
 }
+
+func deleteFile(filePath string) {
+	log.RabLog.Infof("%s 删除开始", filePath)
+	// 检查文件是否存在
+	_, err := os.Stat(filePath)
+	if err != nil {
+		// 文件不存在，不执行删除操作
+		log.RabLog.Errorf("%s 文件不存在，无需删除, err: %v", filePath, err)
+		return
+	}
+
+	// 删除文件
+	err = os.Remove(filePath)
+	if err != nil {
+		// 删除文件时发生错误
+		log.RabLog.Errorf("%s 删除文件时发生错误, err: %v", filePath, err)
+		return
+	}
+	log.RabLog.Infof("%s 删除成功", filePath)
+}

@@ -22,6 +22,15 @@ func RunSheduler() {
 		log.RabLog.Errorf("Add cron job failed, %v", err)
 		return
 	}
+	// 一小时执行一次的任务
+	err = CronClean.AddFunc(config.RabConfig.Cron.CronPerH, func(){
+		// 因为通过率一直在变，所以每小时清空一次每日一题的数据
+		deleteFile(common.LCDailyFile)
+	})
+	if err != nil {
+		log.RabLog.Errorf("Add cron job failed, %v", err)
+		return
+	}
 	// 五分钟执行一次的任务
 	err = CronClean.AddFunc(config.RabConfig.Cron.CronPerFM, func(){
 		// 清理图片文件夹
