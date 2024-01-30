@@ -2,6 +2,7 @@
 package scheduler
 
 import (
+	"time"
 	"github.com/robfig/cron"
 
 	"rabbot/internal/log"
@@ -17,6 +18,14 @@ func RunSheduler() {
 	// 每天凌晨的任务
 	err := CronClean.AddFunc(config.RabConfig.Cron.CronDaily, func(){
 		deleteTmpFiles(common.TmpDir)
+		// 获取当前时间的前一天作为词云标题，发送词云给每个开启功能的群聊
+		currentTime := time.Now()
+		previousDay := currentTime.AddDate(0, 0, -1)
+		formattedDate := previousDay.Format("2006.1.2")
+		rabmod.GenCiyun("", formattedDate)
+		rabmod.SendCiyun("")
+		//发送完成后删除掉这个目录下的文件，这里会把凌晨N（1~5*开启功能的群聊）分钟内的聊天记录统计不上，问题不大
+		deleteTmpFiles(common.HisDir)
 	})
 	if err != nil {
 		log.RabLog.Errorf("Add cron job failed, %v", err)

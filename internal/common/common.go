@@ -7,6 +7,8 @@ var (
 	TmpDir = DataDir + "/tmp"   // 临时目录
 	LogDir = DataDir + "/log"	// 日志目录
 	PicDir = DataDir + "/pic"	// 图片目录
+	HisDir = DataDir + "/history" // 聊天历史目录
+	SPushPath = DataDir + "/site.url" // 网站最新文章/评论链接缓存文件路径
 	LogFilename = LogDir + "/rabbot.log"  // 日志文件名
 	XiJsonFile = TmpDir + "/xi.json"	// 喜加一数据缓存文件名
 	XiSJsonFile = TmpDir + "/xisteam.json"	// steam喜加一缓存文件吗

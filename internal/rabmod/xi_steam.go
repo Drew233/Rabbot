@@ -112,6 +112,9 @@ func GetSXiInfo() (string, error) {
 	}
 
 	str := "Steam当前限免🎮："
+	if (len(data) == 0) {
+		str += "\n啊哦，小兔子也找不到有什么免费游戏了，再等等咯"
+	}
 	for _, value := range data {
 		str += "\n" + common.Dilimiter + fmt.Sprintf("🕹游戏名：%s\n💰参考价格：%s\n🗣️历史评价：%s\n🔗领取链接：%s", value.Title, value.Price, value.Summary, value.Link)
 	}

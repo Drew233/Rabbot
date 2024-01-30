@@ -23,6 +23,8 @@ func ModInit() {
 	for feaName, feaStruct := range config.RabConfig.Features {
 		feaFunc := reflect.ValueOf(common.FuncNameMap[feaStruct.Entry])
 
+		log.RabLog.Infof("%s : feaFunc %v, valid: %v, Kind: %v", feaName, feaFunc, feaFunc.IsValid, feaFunc.Kind)
+
 		if feaFunc.IsValid() && feaFunc.Kind() == reflect.Func {
 			FuncMap[feaName] = feaFunc
 		} else {

@@ -4,6 +4,8 @@ package entry
 import (
 	"github.com/eatmoreapple/openwechat"
 	"rabbot/internal/handlers"
+	"rabbot/internal/sitepush"
+	"rabbot/internal/rabmod"
 	"rabbot/internal/log"
 )
 
@@ -25,6 +27,11 @@ func Run () {
 			return
 		}
 	}
+
+	rabmod.CiyunInit(bot)
+
+	// 轮询网站rss
+	go sitepush.SPushEntry(bot)
 
 	// 阻塞主goroutine, 直到发生异常或者用户主动退出
 	bot.Block()

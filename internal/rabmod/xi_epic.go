@@ -29,6 +29,15 @@ type PromotionsItem struct {
 	} `json: "promotionalOffers"`
 }
 
+type Mapping struct {
+	PageSlug string `json:"pageSlug"`
+	PageType string `json:"pageType"`
+}
+
+type CatalogNs struct {
+	Mappings []Mapping `json:"mappings"`
+}
+
 type gameInfo struct {
 	ProductSlug string `json:"productSlug"`
 	Promotions struct {
@@ -42,6 +51,7 @@ type gameInfo struct {
 		} `json: totalPrice`
 	} `json: "price`
 	Url string
+	CatalogNs CatalogNs `json:"catalogNs"`
 }
 
 // 导出请求喜加一数据接口
@@ -122,17 +132,29 @@ func XiPlusOne(requestStruct *common.RequestStruct) (*common.ReplyStruct, error)
 	xiStr, upXiStr := "", ""
 	for _, gameInfo := range data.Data.Catalog.SearchStore.Elements {
 		var proItem PromotionsItem
+		var gameUrl = ""
+		if (gameInfo.ProductSlug != "") {
+			gameUrl = "https://epicgames.com/store/product/" + gameInfo.ProductSlug
+		} else if (len(gameInfo.CatalogNs.Mappings) > 0 && gameInfo.CatalogNs.Mappings[0].PageSlug != "") {
+			gameUrl = "https://store.epicgames.com/zh-CN/p/" + gameInfo.CatalogNs.Mappings[0].PageSlug
+		} else {
+			gameUrl = "阿哦，小兔子找不到链接，自己上去看看呢？"
+		}
 		if len(gameInfo.Promotions.PromotionalOffers) > 0 && len(gameInfo.Promotions.PromotionalOffers[0].PromotionalOffers) > 0 {
 			proItem = gameInfo.Promotions.PromotionalOffers[0]
-			xiStr += fmt.Sprintf(common.XiGameStr, gameInfo.Title, getTime(proItem.PromotionalOffers[0].StartDate), getTime(proItem.PromotionalOffers[0].EndDate), "https://epicgames.com/store/product/" + gameInfo.ProductSlug) + common.Dilimiter
+			xiStr += fmt.Sprintf(common.XiGameStr, gameInfo.Title, getTime(proItem.PromotionalOffers[0].StartDate), getTime(proItem.PromotionalOffers[0].EndDate), gameUrl) + common.Dilimiter
 		} else if len(gameInfo.Promotions.UpcomingPromotionalOffers) > 0 && len(gameInfo.Promotions.UpcomingPromotionalOffers[0].PromotionalOffers) > 0 {
 			proItem = gameInfo.Promotions.UpcomingPromotionalOffers[0]
-			upXiStr += fmt.Sprintf(common.XiGameStr, gameInfo.Title, getTime(proItem.PromotionalOffers[0].StartDate), getTime(proItem.PromotionalOffers[0].EndDate), "https://epicgames.com/store/product/" + gameInfo.ProductSlug) + common.Dilimiter
+			upXiStr += fmt.Sprintf(common.XiGameStr, gameInfo.Title, getTime(proItem.PromotionalOffers[0].StartDate), getTime(proItem.PromotionalOffers[0].EndDate), gameUrl) + common.Dilimiter
 		} else {
 			continue
 		}
 	}
 
+	if (upXiStr == "") {
+		upXiStr = "啊哦，小兔子也找不到有什么免费游戏了，再等等咯"
+	}
+	
 	replyStr := "早买早享受，晚买有折扣，不买🆓免费送\nEpic当前限免🎮：\n" + common.Dilimiter + xiStr + "Epic即将限免🎮：\n" + common.Dilimiter + upXiStr
 
 	steamStr, err := GetSXiInfo()

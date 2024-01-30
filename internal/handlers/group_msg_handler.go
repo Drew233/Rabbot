@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"os"
+	"bufio"
 	"strings"
 
 	"github.com/eatmoreapple/openwechat"
@@ -30,6 +32,21 @@ func (g *GroupMessageHandler) handle(msg *openwechat.Message) error {
 	}
 
 	if msg.IsText() && msg.Content != "" {
+		// 保存每个群的聊天记录，用于生成词云
+		filePath := common.HisDir + "/history." + groupName
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			file, _ := os.Create(filePath)
+			defer file.Close()
+		}
+		file, _ := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+		defer file.Close()
+
+		writer := bufio.NewWriter(file)
+		defer writer.Flush()
+
+		data := []byte(msg.Content)
+		_, _ = writer.Write(data)
+
 		return g.ReplyText(msg)
 	}
 	return nil
